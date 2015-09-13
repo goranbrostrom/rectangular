@@ -53,6 +53,21 @@ source("R/syplot3.R")
 syplot3(FALSE)
 @
 
+This is based on data from the SCB web page (publicly available). It is thus based on \emph{period data}. We have also a data set with individual deaths in Sweden (Socialstyrelsen) from the years 1952 -- 2010. Let us look at it (slightly simplified).
+
+<<looksoc, echo = FALSE, message = FALSE>>=
+deaths <- read.table("Socst/avlidna_1952_2010_.txt", sep = "\t", header = TRUE)
+deaths$manad_ok <- NULL
+deaths$month <- factor(deaths$manad, labels = c("jan", "feb", "mar", "apr", "may", 
+                                                "jun", "jul", "aug", "sep", "oct",
+                                                "nov", "dec"))
+deaths$sex <- factor(deaths$kon, labels = c("man", "woman"))
+deaths$manad <- deaths$kon <- NULL
+names(deaths) <- c("year", "age", "cause", "month", "sex")
+deaths <- deaths[, c("year", "month", "age", "sex", "cause")]
+deaths <- deaths[deaths$age < 120, ]
+head(deaths)
+@
 
 \bibliography{rect}
 \end{document}
