@@ -1,8 +1,8 @@
 syplot3 <- function(live = TRUE){
     library(Sweden)
-    dd <- get.deaths()
-    pop <- get.pop()
-    haz <- dd / pop
+    dd <- getDeaths(ages = 60:100)
+    pp <- getPop(ages = 60:100, years = 1968:2014)
+    haz <- dd / pp
     Haz <- apply(haz, 2, cumsum)
     S <- exp(-Haz)
     dd <- haz * S
@@ -19,17 +19,17 @@ syplot3 <- function(live = TRUE){
     for(i in sequence){
         plot(dd[, 1], type = "s", col = 1, ylim = c(0, 0.042),
              xlab = "Age", ylab = "Density", main = "Sweden, death ages")
-        text(40, 0.02, as.character(1968 + i), cex = tsize, col = "red")
-        text(40, 0.03, as.character(1969), cex = tsize, col = "black")
+        text(40, 0.02, as.character(1968 + i - 1), cex = tsize, col = "red")
+        text(40, 0.03, as.character(1968), cex = tsize, col = "black")
         abline(h = 0)
         lines(dd[, i], type = "s", col = "red")
-        plot(0:106, c(1, S[, 1]), type = "s", col = 1, ylim = c(0, 1),
+        plot(0:101, c(1, S[, 1]), type = "s", col = 1, ylim = c(0, 1),
              xlab = "Age", ylab = "Surviving fraction",
              main = "Sweden, death ages")
-        text(40, 0.5, as.character(1968 + i), cex = tsize, col = "red")
-        text(40, 0.7, as.character(1969), cex = tsize, col = "black")
+        text(40, 0.5, as.character(1968 + i - 1), cex = tsize, col = "red")
+        text(40, 0.7, as.character(1968), cex = tsize, col = "black")
         abline(h = 0, v = 0)
-        lines(0:106, c(1, S[, i]), type = "s", col = "red", ylim = c(0, 0.042))
+        lines(0:101, c(1, S[, i]), type = "s", col = "red", ylim = c(0, 0.042))
         Sys.sleep(0.1)
     }
     
