@@ -48,26 +48,101 @@ Earlier research concerns total mortality, and iteasy to talk about and define \
 
 For Sweden, women and men, total mortality, see Figure 1. 
 
-<<r syplot,echo=FALSE,message=FALSE,fig.cap="Density and survival functions, period data. Sweden 1969--2007.", fig.height = 4>>=
-source("R/syplot3.R")
-syplot3(FALSE)
+<<r syplot,echo=FALSE,message=FALSE,fig.cap="Density and survival functions, conditional on survival up to age 60. Period data, Sweden 1968--2014.", fig.height = 4>>=
+source("R/syplot4.R")
+syplot4(FALSE)
 @
 
 This is based on data from the SCB web page (publicly available). It is thus based on \emph{period data}. We have also a data set with individual deaths in Sweden (Socialstyrelsen) from the years 1952 -- 2010. Let us look at it (slightly simplified).
 
 <<looksoc, echo = FALSE, message = FALSE>>=
-deaths <- read.table("Socst/avlidna_1952_2010_.txt", sep = "\t", header = TRUE)
-deaths$manad_ok <- NULL
-deaths$month <- factor(deaths$manad, labels = c("jan", "feb", "mar", "apr", "may", 
-                                                "jun", "jul", "aug", "sep", "oct",
-                                                "nov", "dec"))
-deaths$sex <- factor(deaths$kon, labels = c("man", "woman"))
-deaths$manad <- deaths$kon <- NULL
-names(deaths) <- c("year", "age", "cause", "month", "sex")
-deaths <- deaths[, c("year", "month", "age", "sex", "cause")]
-deaths <- deaths[deaths$age < 120, ]
-head(deaths)
+load("data/avlidna.rda")
+head(avlidna)
 @
+
+<<max, echo=FALSE, fig.height=4, fig.cap = "Maximum death age by year.">>=
+dmax <- tapply(avlidna$age, avlidna$year, max)
+plot(1952:2010, dmax, ylim = c(90, 120), xlab = "Year", ylab = "Max death age", type = "b", col = "red", axes = FALSE)
+axis(1)
+axis(2, at = c(90, 100, 110))
+box()
+abline(h = 110, lty = 3)
+@
+
+Some years before 1970 apparently are missing death ages above the age of 99.
+
+Let's see how the mean age at death for 60+ varies with sex and year:
+
+<<lm, echo = FALSE, fig.heigth = 4, results = 'asis'>>=
+fit <- lm(age ~ sex + year, data = avlidna)
+library(xtable)
+print(xtable(summary(fit)$coefficients, digits = 3, caption = 'Age at death by year and sex.'))
+@
+
+So women are on average three years older than men at death, and the death age increases with one month and a half per calendar year.
+
+Let's plot the mean ages for women and men.
+
+<<plowm, fig.height = 4, fig.cap = 'Mean age at death for 60+. Based purely on the yearly numbers of deaths by sex and age (at 60+).', echo = FALSE>>=
+women <- with(avlidna[avlidna$sex == "woman", ], tapply(age, year, mean))
+men <- with(avlidna[avlidna$sex == "man", ], tapply(age, year, mean))
+plot(1952:2010, women, type = "l", col = "red", ylim = c(60, 100), xlab = "Year", ylab = "Age")
+lines(1952:2010, men, col = "blue")
+abline(h = 80, lty = 3)
+text(1980, 90, "Women", col = "red")
+text(1980, 65, "Men", col = "blue")
+@
+
+The difference between the two is
+
+<<rattwo, fig.height = 4, echo = FALSE, fig.cap = 'Difference between mean death ages of women and men for 60+.'>>=
+plot(1952:2010, women - men, type = "l", col = "magenta",
+     ylim = c(0, 4), xlab = "Year", ylab = "Difference in years")
+abline(h = 0)
+@
+
+\subsection{Expected remaining life at 60}
+
+<<remli, echo = FALSE, fig.height = 4, fig.cap = 'Expexted death age for 60-year-olds. Based on yearly death rates for 60+.'>>=
+m.deaths <- getDeaths(sex = "males", ages = 60:100)
+m.pop <- getPop(sex = "males", ages = 60:100, years = 1968:2014)
+f.deaths <- getDeaths(sex = "females", ages = 60:100)
+f.pop <- getPop(sex = "females", ages = 60:100, years = 1968:2014)
+m.rate <- m.deaths / m.pop
+f.rate <- f.deaths / f.pop
+m.age <- numeric(41)
+f.age <- numeric(41)
+cutt <- 1:40
+library(eha)
+#m.age[1] <- sum((60:100) * m.rate[, 1] )
+for (i in 1:NCOL(m.rate)){
+    m.age[i] <- integrate(ppch, 0, Inf, 
+                          cuts = cutt, levels = m.rate[, i], lower.tail = FALSE)$value
+}
+for (i in 1:NCOL(f.rate)){
+    f.age[i] <- integrate(ppch, 0, Inf, 
+                          cuts = cutt, levels = f.rate[, i], lower.tail = FALSE)$value
+}
+
+plot(1968:2014, m.age + 60, type = "l", col = "blue", ylim = c(60, 100))
+lines(1968:2014, f.age + 60, col = "red")
+abline(h = 80, lty = 3)
+
+@
+
+Obviously the "only death ages" method underestimates the expected remaining  years at 60 with a couple of years.
+
+The difference between the two is
+
+<<rattwo2, fig.height = 4, echo = FALSE, fig.cap = 'Difference between mean death ages of women and men for 60+.'>>=
+plot(1968:2014, f.age - m.age, type = "l", col = "magenta",
+    ylim = c(0, 5), xlab = "Year", ylab = "Difference in years")
+abline(h = 0)
+text(1980, 90, "Women", col = "red")
+text(1980, 65, "Men", col = "blue")
+@
+
+The conclusion is that the "only deaths data" method is not valid for estimating entities like *expected remaining life*.
 
 \bibliography{rect}
 \end{document}
