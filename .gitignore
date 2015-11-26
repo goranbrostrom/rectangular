@@ -1,0 +1,8 @@
+*~
+*.rda
+figs/*.pdf
+*.bbl
+famine.pdf
+.Rproj.user
+.Rhistory
+.RData
