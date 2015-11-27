@@ -44,7 +44,7 @@ expectancies. Mortality improvement does not necessarily imply concurrent compre
 mortality.
 \end{quote}
 
-Earlier research concerns total mortality, and iteasy to talk about and define \emph{rectangularization} of the survival curve. However, when looking at compression of cause-specific mortality, other techniques and measures must be used. The reason is the interference between causes of death, that is, we cannot regard "deaths in other causes" as independent censorings. This is the core of the difficulties in this study.
+Earlier research concerns total mortality, and it is 2014 easy to talk about and define \emph{rectangularization} of the survival curve. However, when looking at compression of cause-specific mortality, other techniques and measures must be used. The reason is the interference between causes of death, that is, we cannot regard "deaths in other causes" as independent censorings. This is the core of the difficulties in this study.
 
 \section{Illustration}
 
@@ -148,6 +148,27 @@ text(1980, 65, "Men", col = "blue")
 @
 
 The conclusion is that the "only deaths data" method is not valid for estimating entities like *expected remaining life*.
+
+\subsection{Age-specific death rates by sex, 1968--2014}
+
+For males,
+
+<<aspmal, fig.height = 8, echo = FALSE, fig.cap = "Age-specific death rates 1968-2014. Log scale.">>=
+#m.rate = log(m.rate)
+par(ylog = TRUE)
+plot(1968:2014, colMeans(m.rate[1:5, ]), type = "l", xlab = "Year", log = "y", 
+     ylim = c(0.005, 1), xlim = c(1968, 2030))
+text(2020, 0.007, "65-69", col = 1)
+lines(1968:2014, colMeans(m.rate[6:10, ]), col = 3)
+lines(1968:2014, colMeans(m.rate[11:15, ]), col = 4)
+lines(1968:2014, colMeans(m.rate[16:20, ]), col = 5)
+lines(1968:2014, colMeans(m.rate[21:25, ]), col = 6)
+lines(1968:2014, colMeans(m.rate[26:30, ]), col = 7)
+lines(1968:2014, colMeans(m.rate[31:35, ]), col = 8)
+lines(1968:2014, colMeans(m.rate[36:41, ]), col = 2)
+text(2020, 0.5, "95-100", col = 2)
+abline(h = 0)
+@
 
 \bibliography{rect}
 \end{document}
