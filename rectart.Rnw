@@ -65,13 +65,17 @@ xtable(head(avlidna), caption = "First rows of data from Socialstyrelsen", label
 
 The maximum death age by year and sex is seen in Figure~\ref{fig:max}.
 
-<<max, echo=FALSE, fig.height=4, fig.cap = "Maximum death age by year.">>=
-dmax <- tapply(avlidna$age, avlidna$year, max)
-plot(1952:2010, dmax, ylim = c(90, 120), xlab = "Year", ylab = "Max death age", type = "b", col = "red", axes = FALSE)
+<<max, echo=FALSE, fig.height=4, fig.cap = "Maximum death age by year and sex.">>=
+dmax <- tapply(avlidna[avlidna$sex == "man", ]$age, avlidna[avlidna$sex == "man", ]$year, max)
+plot(1952:2010, dmax, ylim = c(90, 120), xlab = "Year", ylab = "Max death age", type = "b", col = "blue", axes = FALSE)
 axis(1)
 axis(2, at = c(90, 100, 110))
 box()
 abline(h = 110, lty = 3)
+d2max <- tapply(avlidna[avlidna$sex == "woman", ]$age, avlidna[avlidna$sex == "woman", ]$year, max)
+lines(1952:2010, d2max, type = "b", col = "red")
+text(1980, 115, "Women", col = "red")
+text(1980, 98, "Men", col = "blue")
 @
 
 Some years before 1970 apparently are missing death ages above the age of 99.
@@ -153,22 +157,60 @@ The conclusion is that the "only deaths data" method is not valid for estimating
 
 For males,
 
-<<aspmal, fig.height = 8, echo = FALSE, fig.cap = "Age-specific death rates 1968-2014. Log scale.">>=
+<<aspmal, fig.height = 8, echo = FALSE, fig.cap = "Age-specific death rates, males, 1968-2014. Log scale.">>=
 #m.rate = log(m.rate)
 par(ylog = TRUE)
 plot(1968:2014, colMeans(m.rate[1:5, ]), type = "l", xlab = "Year", log = "y", 
-     ylim = c(0.005, 1), xlim = c(1968, 2030))
-text(2020, 0.007, "65-69", col = 1)
+     ylim = c(0.005, 1), xlim = c(1968, 2025), axes = FALSE, ylab = "Death rate")
+axis(1, at = c(1968, 1980, 1990, 2000, 2014))
+axis(2, at = c(0.01, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64))
+box()
+text(2020, 0.0075, "60-64", col = 1)
 lines(1968:2014, colMeans(m.rate[6:10, ]), col = 3)
+text(2020, 0.012, "65-69", col = 3)
 lines(1968:2014, colMeans(m.rate[11:15, ]), col = 4)
+text(2020, 0.02, "70-74", col = 4)
 lines(1968:2014, colMeans(m.rate[16:20, ]), col = 5)
+text(2020, 0.034, "75-79", col = 5)
 lines(1968:2014, colMeans(m.rate[21:25, ]), col = 6)
-lines(1968:2014, colMeans(m.rate[26:30, ]), col = 7)
-lines(1968:2014, colMeans(m.rate[31:35, ]), col = 8)
+text(2020, 0.073, "80-84", col = 6)
+lines(1968:2014, colMeans(m.rate[26:30, ]), col = 3)
+text(2020, 0.14, "85-89", col = 3)
+lines(1968:2014, colMeans(m.rate[31:35, ]), col = 9)
+text(2020, 0.25, "90-94", col = 9)
 lines(1968:2014, colMeans(m.rate[36:41, ]), col = 2)
-text(2020, 0.5, "95-100", col = 2)
+text(2020, 0.45, "95-100", col = 2)
 abline(h = 0)
 @
+
+and females,
+
+<<aspfemal, fig.height = 8, echo = FALSE, fig.cap = "Age-specific death rates, females, 1968-2014. Log scale.">>=
+#f.rate = log(f.rate)
+par(ylog = TRUE)
+plot(1968:2014, colMeans(f.rate[1:5, ]), type = "l", xlab = "Year", log = "y", 
+     ylim = c(0.005, 1), xlim = c(1968, 2025), axes = FALSE, ylab = "Death rate")
+axis(1, at = c(1968, 1980, 1990, 2000, 2014))
+axis(2, at = c(0.01, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64))
+box()
+text(2020, 0.0075, "60-64", col = 1)
+lines(1968:2014, colMeans(f.rate[6:10, ]), col = 3)
+text(2020, 0.012, "65-69", col = 3)
+lines(1968:2014, colMeans(f.rate[11:15, ]), col = 4)
+text(2020, 0.02, "70-74", col = 4)
+lines(1968:2014, colMeans(f.rate[16:20, ]), col = 5)
+text(2020, 0.034, "75-79", col = 5)
+lines(1968:2014, colMeans(f.rate[21:25, ]), col = 6)
+text(2020, 0.073, "80-84", col = 6)
+lines(1968:2014, colMeans(f.rate[26:30, ]), col = 3)
+text(2020, 0.14, "85-89", col = 3)
+lines(1968:2014, colMeans(f.rate[31:35, ]), col = 9)
+text(2020, 0.25, "90-94", col = 9)
+lines(1968:2014, colMeans(f.rate[36:41, ]), col = 2)
+text(2020, 0.45, "95-100", col = 2)
+abline(h = 0)
+@
+
 
 \bibliography{rect}
 \end{document}
