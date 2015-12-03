@@ -2,7 +2,12 @@
 *.rda
 figs/*.pdf
 *.bbl
-famine.pdf
 .Rproj.user
 .Rhistory
 .RData
+*.log
+*.aux
+*.pdf
+*.tex
+*.fff
+*.lof
