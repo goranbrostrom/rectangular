@@ -1,9 +1,9 @@
-\documentclass{article}
+\documentclass[a4paper,12pt]{article}
 
 \usepackage[utf8]{inputenc}
 
-\usepackage[figuresonly]{endfloat}
-
+\usepackage{endfloat}
+\renewcommand{\efloatseparator}{\mbox{}}
 \title{Rectangularization of mortality in old age from a cause of death perspective}
 
 \author{Göran Broström, Sören Edvinsson, Erling Lundevaller}
@@ -44,7 +44,7 @@ expectancies. Mortality improvement does not necessarily imply concurrent compre
 mortality.
 \end{quote}
 
-Earlier research concerns total mortality, and it is 2014 easy to talk about and define \emph{rectangularization} of the survival curve. However, when looking at compression of cause-specific mortality, other techniques and measures must be used. The reason is the interference between causes of death, that is, we cannot regard "deaths in other causes" as independent censorings. This is the core of the difficulties in this study.
+Earlier research concerns total mortality, and it is easy to talk about and define \emph{rectangularization} of the survival curve. However, when looking at compression of cause-specific mortality, other techniques and measures must be used. The reason is the interference between causes of death, that is, we cannot regard "deaths in other causes" as independent censorings. This is the core of the difficulties in this study.
 
 \section{Illustration}
 
@@ -55,10 +55,13 @@ source("R/syplot4.R")
 syplot4(FALSE)
 @
 
-This is based on data from the SCB web page (publicly available). It is thus based on \emph{period data}. We have also a data set with individual deaths in Sweden (Socialstyrelsen) from the years 1952 -- 2010. Let us look at it (slightly simplified).
+This is based on data from the SCB web page (publicly available). It is thus based on \emph{period data}. 
+
+We also have a data set with individual deaths in Sweden (Socialstyrelsen) from the years 1952--2010. Let us look at the first lines in the file.
 
 <<looksoc, echo = FALSE, message = FALSE,results='asis'>>=
 library(xtable)
+##con <- "http://capa.ddb.umu.se/~gb/research/Mortality/avlidna.rda"
 load("data/avlidna.rda")
 xtable(head(avlidna), caption = "First rows of data from Socialstyrelsen", label = "tab:maxage")
 @
@@ -90,7 +93,7 @@ print(xtable(summary(fit)$coefficients, digits = 3, caption = 'Age at death by y
 
 So women are on average three years older than men at death, and the death age increases with one month and a half per calendar year.
 
-Let's plot the mean ages for women and men.
+Let's plot the mean ages at death for women and men.
 
 <<plowm, fig.height = 4, fig.cap = 'Mean age at death for 60+. Based purely on the yearly numbers of deaths by sex and age (at 60+).', echo = FALSE>>=
 women <- with(avlidna[avlidna$sex == "woman", ], tapply(age, year, mean))
@@ -102,13 +105,13 @@ text(1980, 90, "Women", col = "red")
 text(1980, 65, "Men", col = "blue")
 @
 
-The difference between the two is
+%The difference between the two is
 
-<<rattwo, fig.height = 4, echo = FALSE, fig.cap = 'Difference between mean death ages of women and men for 60+.'>>=
-plot(1952:2010, women - men, type = "l", col = "magenta",
-     ylim = c(0, 4), xlab = "Year", ylab = "Difference in years")
-abline(h = 0)
-@
+%<<rattwo, fig.height = 4, echo = FALSE, fig.cap = 'Difference between mean death ages %of women and men for 60+.'>>=
+%plot(1952:2010, women - men, type = "l", col = "magenta",
+%     ylim = c(0, 4), xlab = "Year", ylab = "Difference in years")
+%abline(h = 0)
+%@
 
 \subsection{Expected remaining life at 60}
 
@@ -151,7 +154,7 @@ text(1980, 90, "Women", col = "red")
 text(1980, 65, "Men", col = "blue")
 @
 
-The conclusion is that the "only deaths data" method is not valid for estimating entities like *expected remaining life*.
+The conclusion is that the "only deaths data" method is not valid for estimating entities like \emph{expected remaining life}.
 
 \subsection{Age-specific death rates by sex, 1968--2014}
 
