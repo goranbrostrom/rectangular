@@ -1,0 +1,8 @@
+#!/bin/bash -eu
+Rscript -e "library(knitr); knit('rectart.Rnw')"
+R CMD pdflatex rectart.tex
+bibtex rectart
+R CMD pdflatex rectart.tex
+R CMD pdflatex rectart.tex
+
+
