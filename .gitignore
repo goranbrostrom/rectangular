@@ -11,3 +11,7 @@ figs/*.pdf
 *.tex
 *.fff
 *.lof
+*.ttt
+*.lot
+*.Rproj
+*.gz
